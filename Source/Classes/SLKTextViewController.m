@@ -184,7 +184,7 @@ NSString * const SLKKeyboardDidHideNotification =   @"SLKKeyboardDidHideNotifica
 - (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
-    
+	[self slk_registerNotifications];
     // Invalidates this flag when the view appears
     self.textView.didNotResignFirstResponder = NO;
     
@@ -206,7 +206,7 @@ NSString * const SLKKeyboardDidHideNotification =   @"SLKKeyboardDidHideNotifica
 - (void)viewWillDisappear:(BOOL)animated
 {
     [super viewWillDisappear:animated];
-    
+	[self slk_unregisterNotifications];
     // Stops the keyboard from being dismissed during the navigation controller's "swipe-to-pop"
     self.textView.didNotResignFirstResponder = self.isMovingFromParentViewController;
     
@@ -449,38 +449,12 @@ NSString * const SLKKeyboardDidHideNotification =   @"SLKKeyboardDidHideNotifica
     bounds = CGRectMake(0, 0, bounds.size.width, bounds.size.height);
     
     // Need to correctly convert the endframe kicked out for iOS 7
-    CGRect endFrameConverted;
-    
-    if(!SLK_IS_IOS8_AND_HIGHER &&
-       (endFrame.size.width == bounds.size.height || endFrame.size.height == bounds.size.width)) {
-        endFrameConverted = SLKRectInvert(endFrame);
-    }
-    else {
-        endFrameConverted = endFrame;
-    }
-    
-    // Sets the minimum height of the keyboard
-    if (self.isMovingKeyboard) {
-        keyboardHeight = bounds.size.height;
-        keyboardHeight -= endFrameConverted.origin.y;
-    }
-    else {
-        if ([notification.name isEqualToString:UIKeyboardWillShowNotification] || [notification.name isEqualToString:UIKeyboardDidShowNotification]) {
-            keyboardHeight = endFrameConverted.size.height;
-        }
-        else {
-            keyboardHeight = 0.0;
-        }
-    }
-    
-    keyboardHeight -= [self slk_appropriateBottomMarginToWindow];
-    keyboardHeight -= CGRectGetHeight(self.textView.inputAccessoryView.bounds);
-    
-    if (keyboardHeight < 0) {
-        keyboardHeight = 0.0;
-    }
-    
-    return keyboardHeight;
+	CGRect endFrameConverted = [self.view.window convertRect:endFrame fromWindow:nil];
+	endFrameConverted = [self.view convertRect:endFrameConverted fromView:nil];
+
+	keyboardHeight = self.view.bounds.size.height - endFrameConverted.origin.y;
+	
+	return keyboardHeight;
 }
 
 - (CGFloat)slk_appropriateScrollViewHeight
@@ -1146,10 +1120,10 @@ NSString * const SLKKeyboardDidHideNotification =   @"SLKKeyboardDidHideNotifica
     
     // Skips this it's not the expected textView and shouldn't force adjustment of the text input bar.
     // This will also dismiss the text input bar if it's visible, and exit auto-completion mode if enabled.
-    if (![self.textView isFirstResponder] && !self.shouldForceTextInputbarAdjustment) {
-        return [self slk_dismissTextInputbarIfNeeded];
-    }
-    
+//    if (![self.textView isFirstResponder] && !self.shouldForceTextInputbarAdjustment) {
+//        return [self slk_dismissTextInputbarIfNeeded];
+//    }
+	
     NSInteger curve = [notification.userInfo[UIKeyboardAnimationCurveUserInfoKey] integerValue];
     NSTimeInterval duration = [notification.userInfo[UIKeyboardAnimationDurationUserInfoKey] doubleValue];
     
