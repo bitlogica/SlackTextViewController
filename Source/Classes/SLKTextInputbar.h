@@ -57,6 +57,9 @@ typedef NS_ENUM(NSUInteger, SLKCounterPosition) {
 /** The inner padding to use when laying out content in the view. Default is {5, 8, 5, 8}. */
 @property (nonatomic, assign) UIEdgeInsets contentInset;
 
+/** The default height for the input bar. Default value is 50.0 */
+@property (nonatomic, assign) CGFloat intrinsicHeight;
+
 
 #pragma mark - Initialization
 ///------------------------------------------------

@@ -109,7 +109,7 @@
 
 - (CGSize)intrinsicContentSize
 {
-    return CGSizeMake(UIViewNoIntrinsicMetric, 50.0);
+    return CGSizeMake(UIViewNoIntrinsicMetric, self.intrinsicHeight);
 }
 
 + (BOOL)requiresConstraintBasedLayout
@@ -275,7 +275,7 @@
             return 0.0;
         }
     }
-    return rigthButtonSize.width+self.contentInset.right;
+    return rigthButtonSize.width+self.contentInset.right*2;
 }
 
 - (CGFloat)slk_appropriateRightButtonMargin
@@ -392,6 +392,10 @@
     [self addConstraints:self.charCountLabelVCs];
 }
 
+- (void)setIntrinsicHeight:(CGFloat)intrinsicHeight {
+    _intrinsicHeight = intrinsicHeight;
+    [self invalidateIntrinsicContentSize];
+}
 
 #pragma mark - Text Editing
 
